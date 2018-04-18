@@ -1,0 +1,26 @@
+{
+  "name": "angularjs-nodejs-example",
+  "version": "1.0.0",
+  "description": "This is a simple example application developed using angular.js as frontend and Node.js as backend.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abidaks/angularjs-nodejs-example.git"
+  },
+  "keywords": [
+    "angular.js",
+    "node.js",
+    "example",
+    "admin-dashboard",
+    "bootstrap"
+  ],
+  "author": "Muhammad Abid",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.3",
+    "open": "0.0.5"
+  }
+}
