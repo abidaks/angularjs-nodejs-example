@@ -29,4 +29,4 @@ This is a simple application without database connection, i will connect the app
 
 ## License
 
-* [GNU General Public License](http://www.gnu.org/licenses/)
+* [MIT License](https://opensource.org/licenses/MIT)
