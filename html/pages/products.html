@@ -1,1 +1,24 @@
 <p>{{message}}</p>
+
+<div class="table-responsive" ng-if="products.length > 0">
+	<table class="table table-striped table-sm">
+	  <thead>
+		<tr>
+		  <th>#</th>
+		  <th>Title</th>
+		  <th>Topics</th>
+		  <th>Safe?</th>
+		  <th>Date</th>
+		</tr>
+	  </thead>
+	  <tbody>
+		<tr class="nav-item" ng-repeat="product in products">
+		  <td>{{ product.id }}</td>
+		  <td>{{ product.title }}</td>
+		  <td>{{ product.topics }}</td>
+		  <td>{{ product.is_safe }}</td>
+		  <td>{{ product.date_added }}</td>
+		</tr>
+	  </tbody>
+	</table>
+</div>

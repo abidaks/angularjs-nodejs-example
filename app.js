@@ -1,7 +1,17 @@
 var express = require("express");
 var app		= express();
 var path    = require("path");
-var open = require('open');
+var open = require("open");
+var mysql = require("mysql");
+
+
+var pool = mysql.createPool({
+		connectionLimit	: 10,
+		host			: 'localhost',
+		user			: 'root',
+		password		: '',
+		database		: 'test'
+	});
 
 //for all html files
 app.use('/html', express.static(__dirname + '/html'));
@@ -22,8 +32,16 @@ app.get('/home', function (req, res) {
 });
 
 app.get('/products', function (req, res) {
-	var ret = 'This is a test products page';
-	res.status(200).send({message: ret});
+	pool.getConnection(function (err, connection){
+		var sql = "SELECT * FROM ws_posts LIMIT 5"
+		connection.query(sql, function(error, results){
+			connection.release();
+			
+			if(error) throw error;
+			
+			res.status(200).json(results);
+		});
+	});
 });
 
 app.get('/orders', function (req, res) {

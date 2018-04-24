@@ -107,7 +107,12 @@ app.controller('mainCont', function($scope, Page) {
 	
 	$http.get('/products')
 		.then(function(response){
-			$scope.message = response.data.message;
+			if(response.data.length > 0){
+				$scope.message = 'Products found in database';
+			}else{
+				$scope.message = 'products not found';
+			}
+			$scope.products = response.data;
 		}, function(response){
 			$scope.message = response;
 		});
