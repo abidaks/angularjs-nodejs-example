@@ -1,6 +1,8 @@
-# Simple Node.js and Angular.js Example
+# Node.js and Angular.js Ecommerce Application
 
-This is a simple example application developed using Angular.js as frontend and Node.js as backend.
+This is a simple example e-commerce application is developed using Angular.js as frontend and Node.js as backend.
+
+Currently developing backend of the application, once it completes i will create frontend store.
 
 ## Installation
 
@@ -24,8 +26,8 @@ Now you can run it using the node command
 > node app
 ```
 
-## Future Updates
-This is a simple application without database connection, i will connect the application to various databases (NoSQL or regular SQL).
+## Databases Implementaion
+I have made two beanches one for mysql and one for mongo db, i will be continuously updating these two branches and create a backend and frontend for a basic ecommerce application in node.js and angular.js
 
 ## License
 
