@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute', 'ngResource']);
+var app = angular.module('app', ['ngRoute', 'ngResource', 'ngCookies']);
 
 app.factory('Page', function() {
 	var title = 'default';
@@ -29,10 +29,6 @@ app.config( function ($routeProvider, $locationProvider) {
 				controller: 'customersCont',
 				templateUrl: 'pages/customers.html'
 			})
-			.when('/reports', {
-				controller: 'reportsCont',
-				templateUrl: 'pages/reports.html'
-			})
 			.when('/settings', {
 				controller: 'settingsCont',
 				templateUrl: 'pages/settings.html'
@@ -41,7 +37,11 @@ app.config( function ($routeProvider, $locationProvider) {
 				controller: 'homeCont',
 				templateUrl: 'pages/home.html'
 			})
-			.otherwise({ redirectTo: '/home' });
+			.when('/login', {
+				controller: 'userCont',
+				templateUrl: 'pages/login.html'
+			})
+			.otherwise({ redirectTo: '/login' });
 		
 		$locationProvider.html5Mode(true);
 	});
@@ -59,17 +59,20 @@ app.directive('onFinishRender', function ($timeout) {
 	}
 });
 
-app.controller('mainCont', function($scope, Page) {
+app.controller('mainCont', function($rootScope, $cookieStore, $scope, Page) {
 	Page.setTitle("Dashboard Template for Bootstrap");
 	$scope.Page = Page;
 	
 	var links = [];
-	links.push({title : 'Dashboard', url: '/html/home', logo : 'home'});
-	links.push({title : 'Orders', url: '/html/orders', logo : 'file'});
-	links.push({title : 'Products', url: '/html/products', logo : 'shopping-cart'});
-	links.push({title : 'Customers', url: '/html/customers', logo : 'users'});
-	links.push({title : 'Reports', url: '/html/reports', logo : 'bar-chart-2'});
-	links.push({title : 'Settings', url: '/html/settings', logo : 'layers'});
+	$rootScope.globals = $cookieStore.get('globals') || {};
+	if ($rootScope.globals.currentUser) {
+		links.push({title : 'Dashboard', url: '/html/home', logo : 'home'});
+		links.push({title : 'Orders', url: '/html/orders', logo : 'file'});
+		links.push({title : 'Products', url: '/html/products', logo : 'shopping-cart'});
+		links.push({title : 'Customers', url: '/html/customers', logo : 'users'});
+		links.push({title : 'Settings', url: '/html/settings', logo : 'layers'});
+	}
+	
 	$scope.navs = links;
 	
 	$scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
@@ -129,18 +132,6 @@ app.controller('mainCont', function($scope, Page) {
 			$scope.message = response;
 		});
 })
-.controller('reportsCont', function($scope, $http, Page) {
-	Page.setTitle("Reports - Dashboard Template for Bootstrap");
-	Page.seth1("Reports");
-	$scope.Page = Page;
-	
-	$http.get('/reports')
-		.then(function(response){
-			$scope.message = response.data.message;
-		}, function(response){
-			$scope.message = response;
-		});
-})
 .controller('settingsCont', function($scope, $http, Page) {
 	Page.setTitle("Settings - Dashboard Template for Bootstrap");
 	Page.seth1("Settings");
@@ -152,8 +143,73 @@ app.controller('mainCont', function($scope, Page) {
 		}, function(response){
 			$scope.message = response;
 		});
+})
+.controller('userCont', function($rootScope, $cookieStore, $scope, $http, Page) {
+	Page.setTitle("Login - Dashboard Template for Bootstrap");
+	Page.seth1("Login");
+	$scope.Page = Page;
+	$scope.message = '';
+	
+	$('#nav-tab a').on('click', function (e) {
+		e.preventDefault();
+		$(this).tab('show');
+	});
+	
+	$scope.register = function () {
+		var dataObj = {
+				name : $scope.name,
+				email : $scope.email,
+				pass : $scope.pass
+		};
+		var res = $http.post('/users/register', dataObj)
+			.then(function(response) {
+				console.log(response.data);
+				$scope.message = response.data.message;
+			}, function(response) {
+				$scope.message = response.data.message;
+			});
+	};
+	
+	$scope.login = function () {
+		var dataObj = {
+				email : $scope.loginEmail,
+				pass : $scope.loginPass
+		};
+		var res = $http.post('/users/login', dataObj)
+			.then(function(response) {
+				console.log(response.data);
+				$scope.message = response.data.message;
+			}, function(response) {
+				$scope.message = response.data.message;
+			});
+	};
+	
+	$rootScope.globals = $cookieStore.get('globals') || {};
+	var loggedIn = $rootScope.globals.currentUser;
+	if (loggedIn) {
+		$location.path('/home');
+	}
 });
 
+/*
+run.$inject = ['$rootScope', '$location', '$cookieStore', '$http'];
+    function run($rootScope, $location, $cookieStore, $http) {
+        // keep user logged in after page refresh
+        $rootScope.globals = $cookieStore.get('globals') || {};
+        if ($rootScope.globals.currentUser) {
+            $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line
+        }
+
+        $rootScope.$on('$locationChangeStart', function (event, next, current) {
+            // redirect to login page if not logged in and trying to access a restricted page
+            var restrictedPage = $.inArray($location.path(), ['/login', '/register']) === -1;
+            var loggedIn = $rootScope.globals.currentUser;
+            if (restrictedPage && !loggedIn) {
+                $location.path('/login');
+            }
+        });
+    }
+*/
 
 
 

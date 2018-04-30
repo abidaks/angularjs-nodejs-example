@@ -1,71 +1,32 @@
-var express = require("express");
-var app		= express();
-var path    = require("path");
-var open = require("open");
-var mysql = require("mysql");
+var express		= require("express");
+var bodyParser	= require("body-parser");
+var app			= express();
+var path		= require("path");
+var mongose		= require("mongoose");
+
+var homeRoutes		= require("./routes/Home");
+var userRoutes		= require("./routes/Users");
+var orderRoutes		= require("./routes/Orders");
+var productRoutes	= require("./routes/Products");
+var settingRoutes	= require("./routes/Settings");
+var customerRoutes	= require("./routes/Customers");
+
+mongose.connect('mongodb://localhost:27017/testdb');
+
+app.use(bodyParser.json());
+
+app.use('/home', homeRoutes);
+app.use('/users', userRoutes);
+app.use('/products', productRoutes);
+app.use('/orders', orderRoutes);
+app.use('/customers', customerRoutes);
+app.use('/settings', settingRoutes);
 
 
-var pool = mysql.createPool({
-		connectionLimit	: 10,
-		host			: 'localhost',
-		user			: 'root',
-		password		: '',
-		database		: 'test'
-	});
-
-//for all html files
 app.use('/html', express.static(__dirname + '/html'));
-
 
 app.get('/', function (req, res) {
 	res.sendFile(path.join(__dirname+'/html/index.html'));
 });
 
-app.get('/home', function (req, res) {
-	var ret = 'This is a test home page';
-	var query = req.query;
-	Object.keys(query).forEach(function(key) {
-		ret += '<br>'+key+' : '+query[key];
-	});
-	
-	res.status(200).send({message: ret});
-});
-
-app.get('/products', function (req, res) {
-	pool.getConnection(function (err, connection){
-		var sql = "SELECT * FROM ws_posts LIMIT 5"
-		connection.query(sql, function(error, results){
-			connection.release();
-			
-			if(error) throw error;
-			
-			res.status(200).json(results);
-		});
-	});
-});
-
-app.get('/orders', function (req, res) {
-	var ret = 'This is a test orders page';
-	res.status(200).send({message: ret});
-});
-
-app.get('/customers', function (req, res) {
-	var ret = 'This is a test Customers page';
-	res.status(200).send({message: ret});
-});
-
-app.get('/reports', function (req, res) {
-	var ret = 'This is a test reports page';
-	res.status(200).send({message: ret});
-});
-
-app.get('/settings', function (req, res) {
-	var ret = 'This is a test settings page';
-	res.status(200).send({message: ret});
-});
-
-app.listen(3000, function() {
-	open('http://localhost:3000/');
-});
-
-console.log("App running on port 3000.");
+module.exports = app;

@@ -1,0 +1,41 @@
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <a class="nav-item nav-link active" id="nav-login-tab" data-toggle="tab" href="#nav-login" role="tab" aria-controls="nav-login" aria-selected="true">Login</a>
+    <a class="nav-item nav-link" id="nav-register-tab" data-toggle="tab" href="#nav-register" role="tab" aria-controls="nav-register" aria-selected="false">Register</a>
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent" name="login-form" id="login-form">
+	<br />
+	<p>{{message}}</p>
+	<div class="tab-pane fade show active" id="nav-login" role="tabpanel" aria-labelledby="nav-login-tab">
+		<form  ng-submit="login()" method="post">
+			<div class="form-group">
+				<label for="email">Email address</label>
+				<input type="email" class="form-control" id="login-email" ng-model="loginEmail" placeholder="Enter email">
+			</div>
+			<div class="form-group">
+				<label for="password">Password</label>
+				<input type="password" class="form-control" id="login-password" ng-model="loginPass" placeholder="Password">
+			</div>
+			<button type="submit" class="btn btn-primary">login</button>
+		</form>
+	</div>
+	<div class="tab-pane fade" id="nav-register" role="tabpanel" aria-labelledby="nav-register-tab">
+		<form  ng-submit="register()" method="post" name="register-form" id="register-form">
+			<div class="form-group">
+				<label for="name">Full Name</label>
+				<input type="text" class="form-control" ng-model="name" id="name" placeholder="Enter full name">
+			</div>
+			<div class="form-group">
+				<label for="email">Email address</label>
+				<input type="email" class="form-control" id="email" ng-model="email" aria-describedby="emailHelp" placeholder="Enter email">
+				<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+			</div>
+			<div class="form-group">
+				<label for="password">Password</label>
+				<input type="password" class="form-control" ng-model="pass" id="password" placeholder="Password">
+			</div>
+			<button type="submit" id class="btn btn-primary">Register</button>
+		</form>
+	</div>
+</div>

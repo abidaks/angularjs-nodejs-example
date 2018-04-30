@@ -21,7 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.16.3",
-    "mysql": "^2.15.0",
-    "open": "0.0.5"
+    "mangodb": "^1.0.0",
+    "mongoose": "^5.0.16"
   }
 }
