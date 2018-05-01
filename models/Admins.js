@@ -12,7 +12,6 @@ AdminSchema.statics.findByEmail = function findByEmail(email, callback) {
   this.findOne({ email: email }, callback);
 }
 
+var admins = mongoose.model('admins', AdminSchema);
 
-var Admins = mongoose.model('Admins', AdminSchema);
-
-module.exports = Admins;
+module.exports = admins;

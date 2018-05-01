@@ -1,9 +1,10 @@
 "use strict";
 
-var express		= require("express");
-var router		= express.Router();
+var bcrypt	= require('bcrypt');
+var express	= require("express");
+var router	= express.Router();
 
-var Admins = require("../models/Admins");
+var Administrator = require("../models/admins");
 
 router.post('/login', function (req, res) {
 	//handle login requests
@@ -12,9 +13,10 @@ router.post('/login', function (req, res) {
 	var error = true;
 	var msg = "Email and password not match";
 	if(email != '' && pass != ''){
-		Admins.findByEmail(email, function(err, admin){
+		Administrator.findByEmail(email, function(err, admin){
 			console.log(admin);
-			if(admin){
+			if(admin && bcrypt.compareSync(pass, admin.password)){
+				req.session.user = admin._id;
 				res.status(200).send({message: "successful", errors : false});
 			}else{
 				res.status(500).send({message: msg, errors : true});
@@ -25,6 +27,15 @@ router.post('/login', function (req, res) {
 	}
 });
 
+router.get('/logout', (req, res) => {
+    if (req.session.user && req.cookies.user_sid) {
+        res.clearCookie('user_sid');
+        res.status(200).send({message: 'successful', errors : false});
+    } else {
+		res.status(500).send({message: 'not login', errors : true});
+    }
+});
+
 router.post('/register', function (req, res) {
 	//handle register requests
 	var name = req.body.name;
@@ -32,10 +43,12 @@ router.post('/register', function (req, res) {
 	var pass = req.body.pass;
 	
 	if(name != '' && email != '' && pass != ''){
-		var admin = new Admins({
+		var salt = bcrypt.genSaltSync(10);
+		var hashPass = bcrypt.hashSync(req.body.pass, salt);
+		var admin = new Administrator({
 			name: req.body.name,
 			email: req.body.email,
-			password: req.body.pass
+			password: hashPass
 		});
 		
 		admin.save()
@@ -67,6 +80,15 @@ router.get('/', function (req, res) {
 
 router.get('/all', function (req, res) {
 	//get all users
+	Administrator.find({})
+	.then( docs => {
+		console.log(docs);
+		res.status(200).json(docs);
+	})
+	.catch(err => {
+		console.log(err);
+		res.status(500).send({message: "Internal Error", errors : true});
+	});
 });
 
 router.get('/:userId', function (req, res) {
